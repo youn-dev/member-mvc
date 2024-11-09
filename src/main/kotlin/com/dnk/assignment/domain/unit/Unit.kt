@@ -1,6 +1,7 @@
 package com.dnk.assignment.domain.unit
 
 import com.dnk.assignment.domain.BaseEntity
+import com.dnk.assignment.domain.property.Property
 import jakarta.persistence.*
 
 @Entity
@@ -10,8 +11,9 @@ class Unit(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @Column(name = "propertyId", columnDefinition = "bigint not null")
-    val propertyId: Long,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "property_id")
+    val property: Property,
 
     @Column(name = "block", columnDefinition = "varchar not null")
     val block: String,

@@ -1,6 +1,7 @@
 package com.dnk.assignment.domain.property
 
 import com.dnk.assignment.domain.BaseEntity
+import com.dnk.assignment.domain.unit.Unit
 import jakarta.persistence.*
 
 @Entity
@@ -13,4 +14,7 @@ class Property(
 
     @Column(name = "name", columnDefinition = "varchar not null")
     val name: String,
+
+    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY)
+    val unitList: List<Unit> = mutableListOf()
 ) : BaseEntity()

@@ -17,6 +17,7 @@ class WebConfig(
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(dnkAuthenticationInterceptor)
             .addPathPatterns("/v1/users/**")
+            .addPathPatterns("/v1/properties/**")
             .excludePathPatterns("/v1/users/signup")
             .excludePathPatterns("/v1/users/login")
     }
