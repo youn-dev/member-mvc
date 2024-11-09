@@ -10,6 +10,7 @@ import com.dnk.assignment.jwt.DnkTokenRequest
 import com.dnk.assignment.model.request.LoginRequest
 import com.dnk.assignment.model.request.SignupRequest
 import com.dnk.assignment.model.response.JwtResponse
+import com.dnk.assignment.model.response.UserResponse
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -47,6 +48,10 @@ class UserService(
         val jwt = makeJwt(sub = user.id, email = user.email, name = user.email)
         return JwtResponse(jwt)
     }
+
+    @Transactional(readOnly = true)
+    fun getUser(userId: Long): UserResponse? =
+        userRepository.findOneById(userId)?.let(UserResponse::of)
 
     private fun authenticate(user: UserDto, password: String): Boolean {
         return when (bCryptPasswordEncoder.matches(password, user.password)) {
