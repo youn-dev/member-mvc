@@ -4,7 +4,7 @@ import com.dnk.assignment.domain.BaseEntity
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
