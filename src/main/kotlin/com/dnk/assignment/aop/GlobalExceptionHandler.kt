@@ -19,7 +19,11 @@ class GlobalExceptionHandler {
     fun handleCustomException(e: CustomException): ResponseEntity<Any> {
         logger.warn("${e.message}", e)
         return ResponseEntity(
-            e.message,
+            mapOf(
+                "error" to e.error,
+                "errorCode" to e.error.errorCode,
+                "message" to e.customMessage,
+            ),
             null,
             HttpStatus.BAD_REQUEST
         )

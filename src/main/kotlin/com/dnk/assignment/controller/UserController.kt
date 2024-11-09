@@ -2,8 +2,9 @@ package com.dnk.assignment.controller
 
 import com.dnk.assignment.helper.CookieConstant
 import com.dnk.assignment.helper.CookieHelper
+import com.dnk.assignment.model.request.LoginRequest
 import com.dnk.assignment.model.request.SignupRequest
-import com.dnk.assignment.model.response.SignupResponse
+import com.dnk.assignment.model.response.JwtResponse
 import com.dnk.assignment.service.user.UserService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -28,8 +29,27 @@ class UserController(
     fun signup(
         @Valid @RequestBody request: SignupRequest,
         httpServletResponse: HttpServletResponse,
-    ): ResponseEntity<SignupResponse> {
+    ): ResponseEntity<JwtResponse> {
         return userService.signup(request).let { response ->
+            ResponseEntity.ok().body(response).also {
+                CookieHelper.setCookie(
+                    domain = CookieConstant.DKN_DOMAIN,
+                    key = CookieConstant.DNK_AUTH_COOKIE,
+                    value = response.jwt,
+                    response = httpServletResponse,
+                    maxAge = CookieConstant.THIRTY_DAYS,
+                )
+            }
+        }
+    }
+
+    @Operation(summary = "로그인")
+    @PostMapping("/login")
+    fun login(
+        @Valid @RequestBody request: LoginRequest,
+        httpServletResponse: HttpServletResponse,
+    ): ResponseEntity<JwtResponse> {
+        return userService.login(request).let { response ->
             ResponseEntity.ok().body(response).also {
                 CookieHelper.setCookie(
                     domain = CookieConstant.DKN_DOMAIN,
