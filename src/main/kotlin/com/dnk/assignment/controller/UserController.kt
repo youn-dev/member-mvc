@@ -61,4 +61,18 @@ class UserController(
             }
         }
     }
+
+    @Operation(summary = "로그아웃")
+    @PostMapping("/logout")
+    fun logout(
+        httpServletResponse: HttpServletResponse,
+    ) {
+        CookieHelper.setCookie(
+            domain = CookieConstant.DKN_DOMAIN,
+            key = CookieConstant.DNK_AUTH_COOKIE,
+            value = "",
+            response = httpServletResponse,
+            maxAge = CookieConstant.LOGOUT,
+        )
+    }
 }
