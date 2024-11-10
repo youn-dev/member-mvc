@@ -21,7 +21,7 @@ class UnitService(
     @Transactional
     fun create(request: CreateUnitRequest): PropertyWithUnitResponse {
         val property = propertyRepository.findOneById(request.propertyId)
-            ?: throw CustomException(CommonException.NOT_AUTHORIZED)
+            ?: throw CustomException(CommonException.PROPERTY_NOT_EXIST)
 
         val unitsFromXlsx = readXlsxFile("src/main/resources/DNK_village_units.xlsx")
         unitsFromXlsx.map {

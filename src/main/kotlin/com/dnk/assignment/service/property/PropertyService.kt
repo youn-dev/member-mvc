@@ -6,6 +6,7 @@ import com.dnk.assignment.dto.property.PropertyDto
 import com.dnk.assignment.helper.CommonException
 import com.dnk.assignment.helper.CustomException
 import com.dnk.assignment.model.request.CreatePropertyRequest
+import com.dnk.assignment.model.response.PropertyWithUnitResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -24,5 +25,11 @@ class PropertyService(
         propertyRepository.save(
             Property(name = request.name)
         )
+    }
+
+    @Transactional(readOnly = true)
+    fun getProperty(propertyId: Long): PropertyWithUnitResponse {
+        return propertyRepository.findByIdWithUnits(propertyId)?.let(PropertyWithUnitResponse::of)
+            ?: throw CustomException(CommonException.PROPERTY_NOT_EXIST)
     }
 }
