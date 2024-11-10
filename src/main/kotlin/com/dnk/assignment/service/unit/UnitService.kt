@@ -2,6 +2,8 @@ package com.dnk.assignment.service.unit
 
 import com.dnk.assignment.domain.property.PropertyRepository
 import com.dnk.assignment.domain.unit.Unit
+import com.dnk.assignment.domain.unit.UnitRepository
+import com.dnk.assignment.model.response.UnitWithPropertyResponse
 import com.dnk.assignment.helper.CommonException
 import com.dnk.assignment.helper.CustomException
 import com.dnk.assignment.model.request.CreateUnitRequest
@@ -16,6 +18,7 @@ import java.io.FileInputStream
 @Service
 class UnitService(
     private val propertyRepository: PropertyRepository,
+    private val unitRepository: UnitRepository,
     private val entityManager: EntityManager,
 ) {
     @Transactional
@@ -32,6 +35,11 @@ class UnitService(
         entityManager.flush()
         return PropertyWithUnitResponse.of(property)
     }
+
+    @Transactional(readOnly = true)
+    fun getUnit(unitId: Long): UnitWithPropertyResponse =
+        unitRepository.findOneById(unitId)?.let(UnitWithPropertyResponse::of)
+            ?: throw CustomException(CommonException.UNIT_NOT_EXIST)
 
     fun readXlsxFile(filePath: String): List<List<String>> {
         val data = mutableListOf<List<String>>()

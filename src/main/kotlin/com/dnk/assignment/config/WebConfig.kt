@@ -18,6 +18,7 @@ class WebConfig(
         registry.addInterceptor(dnkAuthenticationInterceptor)
             .addPathPatterns("/v1/users/**")
             .addPathPatterns("/v1/properties/**")
+            .addPathPatterns("/v1/units/**")
             .excludePathPatterns("/v1/users/signup")
             .excludePathPatterns("/v1/users/login")
     }
