@@ -10,5 +10,6 @@ enum class CommonException(
     INVALID_PASSWORD("1004", "비밀번호가 일치하지 않습니다."),
     NOT_AUTHORIZED("1005", "인증되지 않았습니다."),
     PROPERTY_ALREADY_EXIST("1006", "해당 자산은 이미 존재합니다."),
+    PROPERTY_NOT_EXIST("1007", "자산이 존재하지 않습니다."),
     ;
 }

@@ -15,8 +15,8 @@ class PropertyService(
 ) {
     @Transactional
     fun create(request: CreatePropertyRequest) {
-        val property = propertyRepository.findByName(request.name)
-            ?.let(PropertyDto::of)
+        val property = propertyRepository.findByName(request.name)?.let(PropertyDto::of)
+
         if (property != null) {
             throw CustomException(CommonException.PROPERTY_ALREADY_EXIST)
         }

@@ -15,6 +15,11 @@ class Property(
     @Column(name = "name", columnDefinition = "varchar not null")
     val name: String,
 
-    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY)
-    val unitList: List<Unit> = mutableListOf()
-) : BaseEntity()
+    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    val unitList: MutableList<Unit> = mutableListOf()
+) : BaseEntity() {
+    fun addUnit(unit: Unit) {
+        unitList.add(unit)
+        unit.property = this
+    }
+}

@@ -13,8 +13,11 @@ class Unit(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
-    val property: Property,
+    var property: Property? = null,
 
     @Column(name = "block", columnDefinition = "varchar not null")
     val block: String,
+
+    @Column(name = "name", columnDefinition = "varchar not null")
+    val name: String,
 ) : BaseEntity()

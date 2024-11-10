@@ -5,5 +5,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PropertyRepository : JpaRepository<Property, Long> {
+    fun findOneById(id: Long): Property?
     fun findByName(name: String): Property?
 }
