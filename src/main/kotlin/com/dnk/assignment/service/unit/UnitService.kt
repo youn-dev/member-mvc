@@ -6,14 +6,13 @@ import com.dnk.assignment.domain.unit.UnitRepository
 import com.dnk.assignment.model.response.UnitWithPropertyResponse
 import com.dnk.assignment.helper.CommonException
 import com.dnk.assignment.helper.CustomException
-import com.dnk.assignment.model.request.CreateUnitRequest
 import com.dnk.assignment.model.response.PropertyWithUnitResponse
 import jakarta.persistence.EntityManager
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.io.FileInputStream
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 class UnitService(
@@ -22,11 +21,11 @@ class UnitService(
     private val entityManager: EntityManager,
 ) {
     @Transactional
-    fun create(request: CreateUnitRequest): PropertyWithUnitResponse {
-        val property = propertyRepository.findOneById(request.propertyId)
+    fun upload(file: MultipartFile, propertyId: Long): PropertyWithUnitResponse {
+        val property = propertyRepository.findOneById(propertyId)
             ?: throw CustomException(CommonException.PROPERTY_NOT_EXIST)
 
-        val unitsFromXlsx = readXlsxFile("src/main/resources/DNK_village_units.xlsx")
+        val unitsFromXlsx = readXlsxFile(file)
         unitsFromXlsx.map {
             property.addUnit(
                 Unit(block = it[0], name = it[1])
@@ -41,29 +40,27 @@ class UnitService(
         unitRepository.findOneById(unitId)?.let(UnitWithPropertyResponse::of)
             ?: throw CustomException(CommonException.UNIT_NOT_EXIST)
 
-    fun readXlsxFile(filePath: String): List<List<String>> {
+    fun readXlsxFile(file: MultipartFile): List<List<String>> {
         val data = mutableListOf<List<String>>()
-        FileInputStream(filePath).use { fis ->
-            val workbook = XSSFWorkbook(fis)
-            val sheet = workbook.getSheetAt(0)
-            for (row in sheet) {
-                if (row.rowNum == 0) {
-                    continue
-                }
-                val rowData = mutableListOf<String>()
-                for (cell in row) {
-                    val cellValue = when (cell.cellType) {
-                        CellType.STRING -> cell.stringCellValue
-                        CellType.NUMERIC -> cell.numericCellValue.toString()
-                        CellType.BOOLEAN -> cell.booleanCellValue.toString()
-                        else -> "Unknown"
-                    }
-                    rowData.add(cellValue)
-                }
-                data.add(rowData)
+        val workbook = XSSFWorkbook(file.inputStream)
+        val sheet = workbook.getSheetAt(0)
+        for (row in sheet) {
+            if (row.rowNum == 0) {
+                continue
             }
-            workbook.close()
+            val rowData = mutableListOf<String>()
+            for (cell in row) {
+                val cellValue = when (cell.cellType) {
+                    CellType.STRING -> cell.stringCellValue
+                    CellType.NUMERIC -> cell.numericCellValue.toString()
+                    CellType.BOOLEAN -> cell.booleanCellValue.toString()
+                    else -> "Unknown"
+                }
+                rowData.add(cellValue)
+            }
+            data.add(rowData)
         }
+        workbook.close()
         return data
     }
 }

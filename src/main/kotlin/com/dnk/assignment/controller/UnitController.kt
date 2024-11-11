@@ -1,17 +1,17 @@
 package com.dnk.assignment.controller
 
-import com.dnk.assignment.model.request.CreateUnitRequest
 import com.dnk.assignment.model.response.PropertyWithUnitResponse
 import com.dnk.assignment.model.response.UnitWithPropertyResponse
 import com.dnk.assignment.service.unit.UnitService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "공간")
 @RestController
@@ -21,11 +21,20 @@ class UnitController(
     private val unitService: UnitService,
 ) {
     @Operation(summary = "공간 추가")
-    @PostMapping
-    fun create(
-        @RequestBody @Valid request: CreateUnitRequest,
+    @PutMapping("/upload")
+    fun upload(
+        @Parameter(description = "자산 ID", schema = Schema(type = "integer", format = "int64"))
+        @RequestParam propertyId: Long,
+        @Parameter(
+            description = "공간 정보 파일",
+            content = [Content(
+                mediaType = "application/octet-stream",
+                schema = Schema(type = "string", format = "binary")
+            )]
+        )
+        @RequestParam file: MultipartFile,
     ): ResponseEntity<PropertyWithUnitResponse> {
-        return unitService.create(request).let {
+        return unitService.upload(file = file, propertyId = propertyId).let {
             ResponseEntity.ok().body(it)
         }
     }
